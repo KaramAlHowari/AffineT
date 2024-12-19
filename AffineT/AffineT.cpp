@@ -104,7 +104,6 @@ vector<sf::Vector2f> getVertices(size_t numVertices)
 		// Error here please fix it
 		x = getDoubleInput("Enter x coordinate for vertex " + to_string(i + 1) + ": ", -100, 100);
 		y = getDoubleInput("Enter y coordinate for vertex " + to_string(i + 1) + ": ", -100, 100);
-		cin >> x >> y;
         if (abs(x) > max_value)
         {
             max_value = abs(x);
@@ -177,7 +176,8 @@ void applyRotation(sf::ConvexShape& shape, float angle) {
     }
 }
 
-int main() {
+int main() 
+{
     // Window settings
     sf::RenderWindow window(sf::VideoMode(800, 800), "Karam's code");
 
@@ -195,9 +195,11 @@ int main() {
     transformedShape.setFillColor(sf::Color::Red);
 
     // Main loop
-    while (window.isOpen()) {
+    while (window.isOpen()) 
+    {
         sf::Event event;
-        while (window.pollEvent(event)) {
+        while (window.pollEvent(event))
+        {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
@@ -210,27 +212,29 @@ int main() {
         window.display();
 
         // Ask the user for the transformation type and amount
-        char transformationType;
-        cout << "Enter transformation type (t for translation, s for scaling, r for rotation, e for exit): ";
-        cin >> transformationType;
+        int transformationType;
+        
+		transformationType = getIntegerInput("Enter the transformation type (1: translation, 2: scaling, 3: rotation, 4: exit): ", 1, 4);
 
-        if (transformationType == 'e') {
+
+
+        if (transformationType == 4) {
             break;
         }
 
-        if (transformationType == 't') {
+        if (transformationType == 1) {
             float dx, dy;
             cout << "Enter translation amounts (dx dy): ";
             cin >> dx >> dy;
             applyTranslation(transformedShape, dx, dy);
         }
-        else if (transformationType == 's') {
+        else if (transformationType == 2) {
             float sx, sy;
             cout << "Enter scaling factors (sx sy): ";
             cin >> sx >> sy;
             applyScaling(transformedShape, sx, sy);
         }
-        else if (transformationType == 'r') {
+        else if (transformationType == 3) {
             float angle;
             cout << "Enter rotation angle (degrees): ";
             cin >> angle;
