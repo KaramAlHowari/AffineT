@@ -34,51 +34,77 @@ void drawCoordinateSystem(sf::RenderWindow& window) {
     window.draw(lines);
 }
 
-// Function to get the number of vertices from the user
-size_t getNumberOfVertices() {
-    size_t numVertices;
-	string input;
-    
-	bool validInput = false;
 
+// Functions to get correct input from the user
+int getIntegerInput(string message, int min_value, int max_value)
+{
+    string input;
+    int number;
+    bool validInput = false;
     while (!validInput) {
-        cout << "Enter the number of vertices (min 3, max 10): ";
-		cin >> input;
+        cout << message;
+        cin >> input;
         try {
-            numVertices = stoi(input);
-            validInput = true;
-		}
-		catch (invalid_argument& e) {
-			cout << "Invalid input. Please enter a valid number." << endl;
-		}
+            number = stoi(input);
+            if (number >= min_value && number <= max_value)
+            {
+                validInput = true;
+            }
+            else
+            {
+                cout << "Invalid input. Please enter a number between " << min_value << " and " << max_value << endl;
+            }
+        }
+        catch (invalid_argument& e) {
+            cout << "Invalid input. Please enter a valid number." << endl;
+        }
         catch (out_of_range& e) {
             cout << "Invalid input. Please enter a number within the valid range." << endl;
         }
     }
-   
-
-    // Ensure the number of vertices is between 3 and 10
-    if (numVertices < 3) {
-        cout << "A shape requires at least 3 vertices. Setting default to 3 vertices." << endl;
-        numVertices = 3;
-    }
-    else if (numVertices > 10) {
-        cout << "A shape can have a maximum of 10 vertices. Setting to 10 vertices." << endl;
-        numVertices = 10;
-    }
-
-    return numVertices;
+    return number;
 }
+double getDoubleInput(string message, int min_value, int max_value)
+{
+    string input;
+    double number;
+    bool validInput = false;
+    while (!validInput) {
+        cout << message;
+        cin >> input;
+        try {
+            number = stod(input);
+            if (number > min_value && number < max_value)
+            {
+                validInput = true;
+            }
+            else
+            {
+                cout << "Invalid input. Please enter a number between " << min_value << " and " << max_value << endl;
+            }
+        }
+        catch (invalid_argument& e) {
+            cout << "Invalid input. Please enter a valid number." << endl;
+        }
+        catch (out_of_range& e) {
+            cout << "Invalid input. Please enter a number within the valid range." << endl;
+        }
+    }
+    return number;
+}
+
 
 // Function to get the coordinates of the vertices from the user
 vector<sf::Vector2f> getVertices(size_t numVertices) 
 {
     vector<sf::Vector2f> vertices(numVertices);
-    float max_value = 0;
+    double max_value = 0;
     for (size_t i = 0; i < numVertices; ++i) {
-        float x, y;
-        cout << "Enter coordinates for vertex " << i + 1 << " (x y): ";
-        cin >> x >> y;
+        double x, y;
+		// Error here please fix it
+		x = getDoubleInput("Enter x coordinate for vertex " + to_string(i + 1) + ": ", -100, 100);
+		y = getDoubleInput("Enter y coordinate for vertex " + to_string(i + 1) + ": ", -100, 100);
+		cin >> x >> y;
         if (abs(x) > max_value)
         {
             max_value = abs(x);
@@ -156,7 +182,7 @@ int main() {
     sf::RenderWindow window(sf::VideoMode(800, 800), "Karam's code");
 
     // Get number of vertices from user
-    size_t numVertices = getNumberOfVertices();
+    size_t numVertices = getIntegerInput("Enter the number of vertices (min 3, max 10): ", 3, 10);
 
     // Get the coordinates of the vertices from the user
     vector<sf::Vector2f> vertices = getVertices(numVertices);
@@ -214,69 +240,7 @@ int main() {
             cout << "Invalid transformation type. Please try again." << endl;
         }
 
-
-
-
     }
 
     return 0;
 }
-
-/*
-int getIntegerInput(string message, int min_value, int max_value)
-{
-    string input;
-    int number;
-    bool validInput = false;
-    while (!validInput) {
-        cout << message;
-        cin >> input;
-        try {
-            number = stoi(input);
-            if (number >= min_value && number <= max_value)
-            {
-                validInput = true;
-            }
-            else
-            {
-                cout << "Invalid input. Please enter a number between " << min_value << " and " << max_value << endl;
-            }
-        }
-        catch (invalid_argument& e) {
-            cout << "Invalid input. Please enter a valid number." << endl;
-        }
-        catch (out_of_range& e) {
-            cout << "Invalid input. Please enter a number within the valid range." << endl;
-        }
-    }
-    return number;
-}
-double getDoubleInput(string message, int min_value, int max_value)
-{
-    string input;
-    int number;
-    bool validInput = false;
-    while (!validInput) {
-        cout << message;
-        cin >> input;
-        try {
-            number = stod(input);
-            if (number > min_value && number < max_value)
-            {
-                validInput = true;
-            }
-            else
-            {
-                cout << "Invalid input. Please enter a number between " << min_value << " and " << max_value << endl;
-            }
-        }
-        catch (invalid_argument& e) {
-            cout << "Invalid input. Please enter a valid number." << endl;
-        }
-        catch (out_of_range& e) {
-            cout << "Invalid input. Please enter a number within the valid range." << endl;
-        }
-    }
-    return number;
-}
-*/
