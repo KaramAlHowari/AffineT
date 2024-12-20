@@ -7,31 +7,34 @@ using namespace std;
 int shape_scale = 1;
 const float PI = 3.14159265358979323846;
 
+//initializing global variables for the window size. These could be changed as long as they are divisible by 200
+const int window_width = 800;
+const int window_height = 800;
+
 
 // Function to draw the Cartesian coordinate system
 void drawCoordinateSystem(sf::RenderWindow& window) {
-    sf::Vector2u windowSize = window.getSize();
     sf::VertexArray lines(sf::Lines);
 
     // Draw vertical lines
-    for (unsigned int x = 0; x <= windowSize.x; x += 100 / shape_scale) {
+    for (unsigned int x = 0; x <= window_width; x += 100 / shape_scale) {
         lines.append(sf::Vertex(sf::Vector2f(x, 0), sf::Color(200, 200, 200)));
-        lines.append(sf::Vertex(sf::Vector2f(x, windowSize.y), sf::Color(200, 200, 200)));
+        lines.append(sf::Vertex(sf::Vector2f(x, window_height), sf::Color(200, 200, 200)));
     }
 
     // Draw horizontal lines
-    for (unsigned int y = 0; y <= windowSize.y; y += 100 / shape_scale) {
+    for (unsigned int y = 0; y <= window_height; y += 100 / shape_scale) {
         lines.append(sf::Vertex(sf::Vector2f(0, y), sf::Color(200, 200, 200)));
-        lines.append(sf::Vertex(sf::Vector2f(windowSize.x, y), sf::Color(200, 200, 200)));
+        lines.append(sf::Vertex(sf::Vector2f(window_width, y), sf::Color(200, 200, 200)));
     }
 
     // Draw x-axis
-    lines.append(sf::Vertex(sf::Vector2f(0, windowSize.y / 2), sf::Color::Blue));
-    lines.append(sf::Vertex(sf::Vector2f(windowSize.x, windowSize.y / 2), sf::Color::Blue));
+    lines.append(sf::Vertex(sf::Vector2f(0, window_height / 2), sf::Color::Blue));
+    lines.append(sf::Vertex(sf::Vector2f(window_width, window_height / 2), sf::Color::Blue));
 
     // Draw y-axis
-    lines.append(sf::Vertex(sf::Vector2f(windowSize.x / 2, 0), sf::Color::Blue));
-    lines.append(sf::Vertex(sf::Vector2f(windowSize.x / 2, windowSize.y), sf::Color::Blue));
+    lines.append(sf::Vertex(sf::Vector2f(window_width / 2, 0), sf::Color::Blue));
+    lines.append(sf::Vertex(sf::Vector2f(window_width / 2, window_height), sf::Color::Blue));
 
     window.draw(lines);
 }
@@ -121,8 +124,15 @@ vector<sf::Vector2f> getVertices(size_t numVertices)
     }
 	// Set the shape_scale based on the maximum absolute value of x or y
     if (max_value > 2)
-    {
-        shape_scale = max_value / 2;
+    {   
+        if (window_width < window_height)
+        {
+            shape_scale = max_value / (window_width / 400);
+        }
+        else
+		{
+			shape_scale = max_value / (window_height / 400);
+		}
     }
     return vertices;
 }
@@ -139,7 +149,7 @@ sf::ConvexShape createShape(const vector<sf::Vector2f>& vertices)
 
     // Scale and translate the shape to fit within the window
     float scale = 100.0f / shape_scale; // Adjust scale factor based on shape_scale
-    sf::Vector2f offset(400, 400); // Offset to center the shape in the window
+    sf::Vector2f offset(window_width/2, window_height/2); // Offset to center the shape in the window
     for (size_t i = 0; i < vertices.size(); ++i)
     {
         sf::Vector2f point = shape.getPoint(i);
@@ -150,6 +160,9 @@ sf::ConvexShape createShape(const vector<sf::Vector2f>& vertices)
 
     return shape;
 }
+
+
+
 
 // The screen has it's own coordinate system, so we need to convert the coordinates of the shape to the screen coordinates
 // with the top left corner being (0, 0) and the bottom right corner being (800, 800)
@@ -177,6 +190,9 @@ float xPlacement(const float& x)
 }
 
 
+
+
+// Affine transformations: translation, scaling, rotation, and shaering
 // Function to apply translation to a shape
 void applyTranslation(sf::ConvexShape& shape, float dx, float dy)
 {
@@ -243,7 +259,7 @@ void printShapeVertices(const sf::ConvexShape& shape)
 int main() 
 {
     // Window settings ( changing resolution breaks the code :) )
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Karam's code");
+    sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Karam's code");
 
     // Get number of vertices from user
     size_t numVertices = getIntegerInput("Enter the number of vertices (min 3, max 10): ", 3, 10);
