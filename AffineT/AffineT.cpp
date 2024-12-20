@@ -7,6 +7,7 @@ using namespace std;
 int shape_scale = 1;
 const float PI = 3.14159265358979323846;
 
+
 // Function to draw the Cartesian coordinate system
 void drawCoordinateSystem(sf::RenderWindow& window) {
     sf::Vector2u windowSize = window.getSize();
@@ -70,7 +71,8 @@ float getFloatInput(string message, int min_value, int max_value)
     string input;
     float number;
     bool validInput = false;
-    while (!validInput) {
+    while (!validInput)
+    {
         cout << message;
         cin >> input;
         try {
@@ -107,7 +109,7 @@ vector<sf::Vector2f> getVertices(size_t numVertices)
 		x = getFloatInput("Enter x coordinate for vertex " + to_string(i + 1) + ": ", -100, 100);
 		y = getFloatInput("Enter y coordinate for vertex " + to_string(i + 1) + ": ", -100, 100);
         vertices[i] = sf::Vector2f(x, y);
-		// Find the maximum absolute value of x and y
+		// Find the maximum absolute value of x or y
         if (abs(x) > max_value)
         {
             max_value = abs(x);
@@ -117,16 +119,16 @@ vector<sf::Vector2f> getVertices(size_t numVertices)
             max_value = abs(y);
         }
     }
-	// Set the shape_scale based on the maximum absolute value of x and y
+	// Set the shape_scale based on the maximum absolute value of x or y
     if (max_value > 2)
     {
-        shape_scale = abs(max_value) / 2;
+        shape_scale = max_value / 2;
     }
     return vertices;
 }
 
 // Function to create a shape for visualization
-sf::ConvexShape createShape(const vector<sf::Vector2f>& vertices, bool applyScale = true)
+sf::ConvexShape createShape(const vector<sf::Vector2f>& vertices)
 {
     sf::ConvexShape shape;
     shape.setPointCount(vertices.size());
@@ -135,22 +137,23 @@ sf::ConvexShape createShape(const vector<sf::Vector2f>& vertices, bool applyScal
     }
     shape.setFillColor(sf::Color::Green);
 
-    if (applyScale) {
-        // Scale and translate the shape to fit within the window
-        float scale = 100.0f / shape_scale; // Adjust scale factor based on shape_scale
-        sf::Vector2f offset(400, 400); // Offset to center the shape in the window
-        for (size_t i = 0; i < vertices.size(); ++i) {
-            sf::Vector2f point = shape.getPoint(i);
-            point.x = point.x * scale + offset.x;
-            point.y = -point.y * scale + offset.y; // Invert y-axis to match Cartesian coordinates
-            shape.setPoint(i, point);
-        }
+    // Scale and translate the shape to fit within the window
+    float scale = 100.0f / shape_scale; // Adjust scale factor based on shape_scale
+    sf::Vector2f offset(400, 400); // Offset to center the shape in the window
+    for (size_t i = 0; i < vertices.size(); ++i)
+    {
+        sf::Vector2f point = shape.getPoint(i);
+        point.x = point.x * scale + offset.x;
+        point.y = -point.y * scale + offset.y; // Invert y-axis to match Cartesian coordinates
+        shape.setPoint(i, point);
     }
 
     return shape;
 }
 
-
+// The screen has it's own coordinate system, so we need to convert the coordinates of the shape to the screen coordinates
+// with the top left corner being (0, 0) and the bottom right corner being (800, 800)
+// and (0, 0) being the center of the screen as (400, 400)
 // Get actual coordinates of the x axis
 float yCoordinate(const float& y)
 {
@@ -200,7 +203,8 @@ void applyScaling(sf::ConvexShape& shape, float sx, float sy)
 void applyRotation(sf::ConvexShape& shape, float angle)
 {
     float radians = angle * PI / 180.0f;
-    for (size_t i = 0; i < shape.getPointCount(); ++i) {
+    for (size_t i = 0; i < shape.getPointCount(); ++i)
+    {
         sf::Vector2f point = shape.getPoint(i);
 		float x = xCoordinate(point.x);
 		float y = yCoordinate(point.y);
@@ -210,10 +214,26 @@ void applyRotation(sf::ConvexShape& shape, float angle)
     }
 }
 
+// Function to apply shaering to a shape
+void applyShaering(sf::ConvexShape& shape, float shx, float shy)
+{
+	for (size_t i = 0; i < shape.getPointCount(); ++i)
+	{
+		sf::Vector2f point = shape.getPoint(i);
+		float x = xCoordinate(point.x);
+		float y = yCoordinate(point.y);
+		float x_new = xPlacement(x + shx * y);
+		float y_new = yPlacement(y + shy * x);
+		shape.setPoint(i, sf::Vector2f(x_new, y_new));
+	}
+}
+
 // Function to print the vertices of a shape
-void printShapeVertices(const sf::ConvexShape& shape) {
+void printShapeVertices(const sf::ConvexShape& shape)
+{
     cout << "Shape Vertices:" << endl;
-    for (size_t i = 0; i < shape.getPointCount(); ++i) {
+    for (size_t i = 0; i < shape.getPointCount(); ++i)
+    {
         sf::Vector2f point = shape.getPoint(i);
         cout << "Vertex " << i + 1 << ": (" << xCoordinate(point.x) << ", " << yCoordinate(point.y) << ")" << endl;
     }
@@ -222,7 +242,7 @@ void printShapeVertices(const sf::ConvexShape& shape) {
 // Main function
 int main() 
 {
-    // Window settings
+    // Window settings ( changing resolution breaks the code :) )
     sf::RenderWindow window(sf::VideoMode(800, 800), "Karam's code");
 
     // Get number of vertices from user
@@ -253,38 +273,49 @@ int main()
         // Render the coordinate system and the shapes
         window.clear();
         drawCoordinateSystem(window);
-        window.draw(transformedShape);
         window.draw(originalShape);
+        window.draw(transformedShape);
         window.display();
 
+		// Print the vertices of the transformed shape
 		printShapeVertices(transformedShape);
 
         // Ask the user for the transformation type and amount
         int transformationType;
         
-		transformationType = getIntegerInput("Enter the transformation type (1: translation, 2: scaling, 3: rotation, 4: exit): ", 1, 4);
+		transformationType = getIntegerInput("Enter the transformation type (1: translation, 2: scaling, 3: rotation, 4: shaering, 5: exit): ", 1, 5);
 
-
-        if (transformationType == 4) {
+		// Apply the transformation based on the user input
+        if (transformationType == 5)
+        {
             break;
         }
-
-        if (transformationType == 1) {
+        else if (transformationType == 1)
+        {
             float dx, dy;
 			dx = getFloatInput("Enter translation amount dx: ", -4, 4);
 			dy = getFloatInput("Enter translation amount dy: ", -4, 4);
             applyTranslation(transformedShape, dx, dy);
         }
-        else if (transformationType == 2) {
+        else if (transformationType == 2)
+        {
             float sx, sy;
 			sx = getFloatInput("Enter scaling factors (sx): ", 0, 4);
 			sy = getFloatInput("Enter scaling factors (sy): ", 0, 4);
             applyScaling(transformedShape, sx, sy);
         }
-        else if (transformationType == 3) {
+        else if (transformationType == 3)
+        {
             float angle;
 			angle = getFloatInput("Enter rotation angle (degrees): ", -360, 360);
             applyRotation(transformedShape, angle);
+        }
+        else if (transformationType == 4)
+        {
+            float shx, shy;
+			shx = getFloatInput("Enter shaering factors (shx): ", -4, 4);
+			shy = getFloatInput("Enter shaering factors (shy): ", -4, 4);
+			applyShaering(transformedShape, shx, shy);
         }
         else {
             cout << "Invalid transformation type. Please try again." << endl;
