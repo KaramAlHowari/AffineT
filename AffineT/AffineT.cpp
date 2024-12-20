@@ -177,7 +177,6 @@ float xCoordinate(const float& x)
 {
     return (x / 100) - 4;
 }
-
 // Get on window placement of the x axis
 float yPlacement(const float& y)
 {
@@ -230,8 +229,8 @@ void applyRotation(sf::ConvexShape& shape, float angle)
     }
 }
 
-// Function to apply shaering to a shape
-void applyShaering(sf::ConvexShape& shape, float shx, float shy)
+// Function to apply shearing to a shape
+void applyShearing(sf::ConvexShape& shape, float shx, float shy)
 {
 	for (size_t i = 0; i < shape.getPointCount(); ++i)
 	{
@@ -299,7 +298,7 @@ int main()
         // Ask the user for the transformation type and amount
         int transformationType;
         
-		transformationType = getIntegerInput("Enter the transformation type (1: translation, 2: scaling, 3: rotation, 4: shaering, 5: exit): ", 1, 5);
+		transformationType = getIntegerInput("Enter the transformation type (1: translation, 2: scaling, 3: rotation, 4: shearing, 5: exit): ", 1, 5);
 
 		// Apply the transformation based on the user input
         if (transformationType == 5)
@@ -329,9 +328,9 @@ int main()
         else if (transformationType == 4)
         {
             float shx, shy;
-			shx = getFloatInput("Enter shaering factors (shx): ", -4, 4);
-			shy = getFloatInput("Enter shaering factors (shy): ", -4, 4);
-			applyShaering(transformedShape, shx, shy);
+			shx = getFloatInput("Enter shearing factors (shx): ", -4, 4);
+			shy = getFloatInput("Enter shearing factors (shy): ", -4, 4);
+			applyShearing(transformedShape, shx, shy);
         }
         else {
             cout << "Invalid transformation type. Please try again." << endl;
