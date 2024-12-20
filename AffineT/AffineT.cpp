@@ -1,10 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
-#include <cmath>
 using namespace std;
 
+//initializing global variables scale of the shape, and PI
 int shape_scale = 1;
+const float PI = 3.14159265358979323846;
 
 // Function to draw the Cartesian coordinate system
 void drawCoordinateSystem(sf::RenderWindow& window) {
@@ -198,11 +199,13 @@ void applyScaling(sf::ConvexShape& shape, float sx, float sy)
 // Function to apply rotation to a shape
 void applyRotation(sf::ConvexShape& shape, float angle)
 {
-    float radians = angle * 3.1416 / 180.0f;
+    float radians = angle * PI / 180.0f;
     for (size_t i = 0; i < shape.getPointCount(); ++i) {
         sf::Vector2f point = shape.getPoint(i);
-        float x_new = point.x * cos(radians) - point.y * sin(radians);
-        float y_new = point.x * sin(radians) + point.y * cos(radians);
+		float x = xCoordinate(point.x);
+		float y = yCoordinate(point.y);
+        float x_new = xPlacement(x * cos(radians) - y * sin(radians));
+        float y_new = yPlacement(x * sin(radians) + y * cos(radians));
         shape.setPoint(i, sf::Vector2f(x_new, y_new));
     }
 }
