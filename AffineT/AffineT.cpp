@@ -1,3 +1,17 @@
+/* ----------------------------------------------------------------------------------------------
+
+File: AffineT.cpp
+Author: Karam AlHowari
+Date: 2023-012-23
+
+Description: This program visualizes 2d shapes with vertices inputted by the user ranging from 3-10 vertices.
+The user can then apply affine transformations to the shape such as translation, scaling, rotation, and shearing.
+The program uses the SFML library to draw the shapes and the Cartesian coordinate system.
+
+-----------------------------------------------------------------------------------------------*/
+
+
+
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
