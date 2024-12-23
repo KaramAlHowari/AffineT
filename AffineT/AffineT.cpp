@@ -2,7 +2,7 @@
 
 File: AffineT.cpp
 Author: Karam AlHowari
-Date: 2023-012-25
+Date: 2023-012-24
 
 Description: This program visualizes 2d shapes with vertices inputted by the user ranging from 3-10 vertices.
 The user can then apply affine transformations to the shape such as translation, scaling, rotation, and shearing.
