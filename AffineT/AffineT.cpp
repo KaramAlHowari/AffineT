@@ -2,7 +2,7 @@
 
 File: AffineT.cpp
 Author: Karam AlHowari
-Date: 2023-012-23
+Date: 2023-012-25
 
 Description: This program visualizes 2d shapes with vertices inputted by the user ranging from 3-10 vertices.
 The user can then apply affine transformations to the shape such as translation, scaling, rotation, and shearing.
@@ -271,7 +271,7 @@ void printShapeVertices(const sf::ConvexShape& shape)
 // Main function
 int main() 
 {
-    // Window settings ( changing resolution breaks the code :) )
+    // Window settings
     sf::RenderWindow window(sf::VideoMode(window_width, window_height), "Karam's code");
 
     // Get number of vertices from user
